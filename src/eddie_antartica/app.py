@@ -29,6 +29,7 @@ from eddie.check_celery_alive import check_celery_alive
 from eddie.digitaltwin.utils import setup_logging
 from eddie.discover_plugins import discover_plugins
 from eddie.geoserver import get_terria_catalog
+from eddie.geoserver.terria_catalogs import Catalog, CatalogGroup
 from src.eddie_antartica import blueprint as eddie_antartica_blueprint
 
 setup_logging()
@@ -55,6 +56,9 @@ for name, module in eddie_plugins.items():
 
 # Flood Resilience specific blueprint
 app.register_blueprint(eddie_antartica_blueprint.blueprint)
+
+# Name of the single top-level catalog group that every geoserver workspace group is nested under.
+CATALOG_ROOT_GROUP_NAME = "Antarctic Data Layers"
 
 
 @app.route('/')
@@ -90,6 +94,34 @@ def health_check() -> Response:
     return Response("Healthy", OK)
 
 
+def nest_workspace_groups(catalog: Catalog) -> Catalog:
+    """
+    Move every top-level workspace group of a terria catalog inside a single parent group.
+
+    Terria merges init files by the path a member sits at, so naming an existing group under a new
+    parent in terriajs/catalog.json forks an empty copy instead of moving the group the backend
+    serves. Re-parenting therefore has to happen here, where the catalog is built. Display names and
+    descriptions stay in terriajs/catalog.json, which can override those traits in place.
+
+    Parameters
+    ----------
+    catalog : Catalog
+        The terria catalog to re-parent, as returned by get_terria_catalog.
+
+    Returns
+    -------
+    Catalog
+        The same catalog with its workspace groups nested inside CATALOG_ROOT_GROUP_NAME.
+    """
+    root_group: CatalogGroup = {
+        "type": "group",
+        "name": CATALOG_ROOT_GROUP_NAME,
+        "members": catalog["catalog"],
+        "isOpen": True,
+    }
+    return {"catalog": [root_group]}
+
+
 @app.route('/terria-catalog.json')
 def terria_catalog() -> Response:
     """
@@ -102,7 +134,7 @@ def terria_catalog() -> Response:
         The HTTP Response. Expect OK if health check is successful
     """
     catalog = get_terria_catalog()
-    return make_response(jsonify(catalog), OK)
+    return make_response(jsonify(nest_workspace_groups(catalog)), OK)
 
 
 # Development server

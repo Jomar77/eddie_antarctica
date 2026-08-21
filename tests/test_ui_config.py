@@ -41,3 +41,52 @@ def test_catalog_check_home_coords() -> None:
     }
 
 
+# The overlay in terriajs/catalog.json is merged onto the catalog served by /terria-catalog.json.
+# Terria matches members by the path of names they sit at, so these names are merge keys: a typo or
+# a display label written into "name" silently forks an empty duplicate instead of adding traits.
+CATALOG_ROOT_GROUP_NAME = "Antarctic Data Layers"
+WORKSPACE_GROUP_NAMES = ["Static Files", "Input Layers", "Extruded Layers"]
+STATIC_LAYER_DIR = pathlib.Path(__file__).resolve().parent.parent / "src" / "static" / "geo"
+
+
+def read_catalog() -> dict:
+    """
+    Parse terriajs/catalog.json.
+
+    Returns
+    -------
+    dict
+        The parsed contents of terriajs/catalog.json.
+    """
+    return json.loads(CATALOG_PATH.read_text())
+
+
+def test_catalog_nests_workspace_groups_under_one_root() -> None:
+    """Every workspace group should sit inside a single top-level group, not beside it."""
+    catalog = read_catalog()
+
+    assert len(catalog["catalog"]) == 1
+    root_group = catalog["catalog"][0]
+    assert root_group["name"] == CATALOG_ROOT_GROUP_NAME
+    assert [group["name"] for group in root_group["members"]] == WORKSPACE_GROUP_NAMES
+
+
+def test_catalog_group_names_have_no_stray_whitespace() -> None:
+    """Group names are merge keys, so leading or trailing whitespace breaks the merge."""
+    catalog = read_catalog()
+    root_group = catalog["catalog"][0]
+
+    for group in [root_group, *root_group["members"]]:
+        assert group["name"] == group["name"].strip()
+
+
+def test_static_file_item_names_match_geoserver_layers() -> None:
+    """Static Files items should key off the geoserver layer names, with labels in nameInCatalog."""
+    catalog = read_catalog()
+    static_files_group = catalog["catalog"][0]["members"][0]
+    assert static_files_group["name"] == "Static Files"
+
+    expected_layer_names = sorted(path.stem for path in STATIC_LAYER_DIR.glob("*.sld"))
+    assert sorted(item["name"] for item in static_files_group["members"]) == expected_layer_names
+    for item in static_files_group["members"]:
+        assert item["nameInCatalog"]

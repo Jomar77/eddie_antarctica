@@ -6,6 +6,87 @@
     "north": -76.45
   },
   "catalog": [
+    {
+      "type": "group",
+      "name": "Antarctic Data Layers",
+      "isOpen": true,
+      "members": [
+        {
+          "type": "group",
+          "name": "Static Files",
+          "isOpen": false,
+          "members": [
+            {
+              "type": "wms",
+              "name": "ant_air_temp_2005-07-01",
+              "nameInCatalog": "Antarctic Air Temperature (1 Jul 2005)",
+              "description": "Antarctic air temperature on 1 July 2005."
+            },
+            {
+              "type": "wms",
+              "name": "gia_anomaly",
+              "nameInCatalog": "Glacial Isostatic Adjustment Anomaly",
+              "description": "Glacial isostatic adjustment anomaly."
+            },
+            {
+              "type": "wms",
+              "name": "gia_global_bed_topography_mv1e21_fr1e24_w0p0_weakEarth_t20",
+              "nameInCatalog": "Bed Topography (GIA weak-Earth run)",
+              "description": "Global bed topography from the glacial isostatic adjustment model run mv1e21_fr1e24_w0p0_weakEarth_t20."
+            },
+            {
+              "type": "wms",
+              "name": "lowry_2024_ice_sheet_model_ism_hotf0-0_mv7-5e20_fr1e24_9-5ka",
+              "nameInCatalog": "Ice Sheet Model (Lowry 2024, 9.5 ka)",
+              "description": "Output of the Lowry (2024) ice sheet model, run ism_hotf0-0_mv7-5e20_fr1e24, at 9.5 ka."
+            },
+            {
+              "type": "wms",
+              "name": "pskrips_atmosphere_daily_mean_U10V10_2017-02-01",
+              "nameInCatalog": "PSKRIPS 10 m Wind (1 Feb 2017)",
+              "description": "PSKRIPS daily mean 10 m wind components (U10, V10) for 1 February 2017."
+            },
+            {
+              "type": "wms",
+              "name": "pskrips_atmosphere_daily_mean_t2C_2017-02-01",
+              "nameInCatalog": "PSKRIPS 2 m Air Temperature, °C (1 Feb 2017)",
+              "description": "PSKRIPS daily mean 2 m air temperature for 1 February 2017, in degrees Celsius."
+            },
+            {
+              "type": "wms",
+              "name": "pskrips_atmosphere_daily_mean_t2K_2017-02-01",
+              "nameInCatalog": "PSKRIPS 2 m Air Temperature, K (1 Feb 2017)",
+              "description": "PSKRIPS daily mean 2 m air temperature for 1 February 2017, in kelvin."
+            },
+            {
+              "type": "wms",
+              "name": "tankersley_2023_sediment_thick",
+              "nameInCatalog": "Sediment Thickness (Tankersley 2023)",
+              "description": "Antarctic sediment thickness from Tankersley et al. (2023)."
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "name": "Input Layers",
+          "isOpen": false,
+          "members": [
+            {
+              "type": "wfs",
+              "name": "region_geometry",
+              "nameInCatalog": "Region Geometry",
+              "description": "Regional boundary polygons served from the digital twin database."
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "name": "Extruded Layers",
+          "isOpen": false,
+          "members": []
+        }
+      ]
+    }
   ],
   "baseMaps": {
     "defaultBaseMapId": "basemap-bing-aerial-with-labels",

@@ -1,7 +1,7 @@
 {
   "initializationUrls": [
-    "catalog",
-    "$BACKEND_URL/terria-catalog.json"
+    "$BACKEND_URL/terria-catalog.json",
+    "catalog"
   ],
   "parameters": {
     "appName": "Antarctic Digital Twin",
