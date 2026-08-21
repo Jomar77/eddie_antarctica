@@ -28,6 +28,9 @@ import geopandas as gpd
 
 from eddie.digitaltwin import retrieve_from_instructions
 from eddie.digitaltwin.utils import setup_logging
+# Re-exported so that `celery -A src.eddie_antartica.tasks` can find the Celery app instance.
+# Do not remove as an unused import; the worker entrypoint fails to boot without it.
+from eddie.tasks import app  # noqa: F401 # pylint: disable=unused-import,cyclic-import
 from src.eddie_antartica.run_all import DEFAULT_MODULES_TO_PARAMETERS
 
 setup_logging()
