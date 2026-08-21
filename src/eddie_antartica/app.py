@@ -28,8 +28,8 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from eddie.check_celery_alive import check_celery_alive
 from eddie.digitaltwin.utils import setup_logging
 from eddie.discover_plugins import discover_plugins
-from eddie.geoserver import get_terria_catalog
 from src.eddie_antartica import blueprint as eddie_antartica_blueprint
+from src.eddie_antartica.terria_catalog import get_terria_catalog
 
 setup_logging()
 
@@ -93,13 +93,14 @@ def health_check() -> Response:
 @app.route('/terria-catalog.json')
 def terria_catalog() -> Response:
     """
-    Return a terria catalog that includes entries for static files and input layers from geoserver.
+    Return a terria catalog that includes entries for the geoserver layers of this digital twin.
+    Layers are grouped by geoserver workspace, nested inside a single "Intermediate Layer" group.
     Supported methods: GET
 
     Returns
     -------
     Response
-        The HTTP Response. Expect OK if health check is successful
+        The HTTP Response. Expect OK with the terria catalog as JSON.
     """
     catalog = get_terria_catalog()
     return make_response(jsonify(catalog), OK)
