@@ -28,8 +28,8 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from eddie.check_celery_alive import check_celery_alive
 from eddie.digitaltwin.utils import setup_logging
 from eddie.discover_plugins import discover_plugins
+from eddie.geoserver import get_terria_catalog
 from src.eddie_antartica import blueprint as eddie_antartica_blueprint
-from src.eddie_antartica.terria_catalog import get_terria_catalog
 
 setup_logging()
 
@@ -102,8 +102,16 @@ def terria_catalog() -> Response:
     Response
         The HTTP Response. Expect OK with the terria catalog as JSON.
     """
-    catalog = get_terria_catalog()
-    return make_response(jsonify(catalog), OK)
+    workspace_groups = get_terria_catalog()["catalog"]
+    for workspace_group in workspace_groups:
+        workspace_group["isOpen"] = False
+    nested_catalog = {"catalog": [{
+        "type": "group",
+        "name": "Intermediate Layer",
+        "isOpen": False,
+        "members": workspace_groups,
+    }]}
+    return make_response(jsonify(nested_catalog), OK)
 
 
 # Development server
